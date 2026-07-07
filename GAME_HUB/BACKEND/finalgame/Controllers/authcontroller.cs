@@ -5,10 +5,8 @@ using Microsoft.AspNetCore.Identity;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
-using finalgame.Models; // Ensure this matches your namespace
+using finalgame.Models;
 using finalgame.Data;
-using System.Diagnostics;   // Ensure this matches your namespace
-
 
 namespace finalgame.Controllers
 {
@@ -28,48 +26,45 @@ namespace finalgame.Controllers
         [AllowAnonymous]
         [HttpPost("register")]
         public IActionResult Register([FromBody] RegisterDto registerDto)
-{
-            // 1. Check if user already exists
-            if (_context.Users.Any(u => u.Email == registerDto.Email))
-                return BadRequest("User already exists.");
+        {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
 
-            // 2. Hash the password
+            if (_context.Users.Any(u => u.Email == registerDto.Email))
+                return BadRequest(new { message = "User already exists." });
+
             var hasher = new PasswordHasher<User>();
             var user = new User
-    {
-        Username = registerDto.Username!,
-        Email = registerDto.Email!,
-        PasswordHash = hasher.HashPassword(null!, registerDto.Password!),// Hash the password
-    };
+            {
+                Username = registerDto.Username!,
+                Email = registerDto.Email!,
+                PasswordHash = hasher.HashPassword(null!, registerDto.Password!)
+            };
 
-    // 3. Save to database
-    _context.Users.Add(user);
-    _context.SaveChanges();
+            _context.Users.Add(user);
+            _context.SaveChanges();
 
-    return Ok(new { message = "Registration successful!" });
-}
+            return Ok(new { message = "Registration successful!" });
+        }
+
+        [AllowAnonymous]
         [HttpPost("login")]
         public IActionResult Login([FromBody] LoginDto loginDto)
         {
-            // 1. Validate credentials against your database
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
             var user = _context.Users.FirstOrDefault(u => u.Email == loginDto.Email);
-            Console.WriteLine($"Login attempt for: {loginDto.Email}");
-    if (user == null) {
-        Console.WriteLine("User not found in database.");
-    } else {
-        Console.WriteLine($"User found: {user.Email}");
-        // Check if the hash is actually present
-        Console.WriteLine($"Stored Hash: {user.PasswordHash}");
-    }
-            var hasher = new PasswordHasher<User>();
-            var result = hasher.VerifyHashedPassword(user, user.PasswordHash, loginDto.Password!);
-            Console.WriteLine($"Password Verification Result: {result}");
-            if (user == null || hasher.VerifyHashedPassword(user, user.PasswordHash, loginDto.Password!) == PasswordVerificationResult.Failed)
+            if (user == null)
                 return Unauthorized(new { message = "Invalid email or password." });
 
-            // 2. Generate and return the JWT token
+            var hasher = new PasswordHasher<User>();
+            var result = hasher.VerifyHashedPassword(user, user.PasswordHash, loginDto.Password!);
+            if (result == PasswordVerificationResult.Failed)
+                return Unauthorized(new { message = "Invalid email or password." });
+
             var token = GenerateJwtToken(user);
-            return Ok(new { token = token });
+            return Ok(new { token });
         }
 
         private string GenerateJwtToken(User user)
@@ -89,26 +84,16 @@ namespace finalgame.Controllers
                 issuer: _config["Jwt:Issuer"],
                 audience: _config["Jwt:Audience"],
                 claims: claims,
-                expires: DateTime.Now.AddHours(2), // Extend to 2 hours
+                expires: DateTime.UtcNow.AddHours(2),
                 signingCredentials: credentials);
 
             return new JwtSecurityTokenHandler().WriteToken(token);
         }
 
-        private bool VerifyPassword(string password, string storedHash)
+        [HttpPost("logout")]
+        public IActionResult Logout()
         {
-            var hasher = new PasswordHasher<User>();
-            var result = hasher.VerifyHashedPassword(null!, storedHash, password);
-            return result == PasswordVerificationResult.Success;
+            return Ok(new { message = "Logged out successfully" });
         }
-
-    [HttpPost("logout")]
-public IActionResult Logout()
-{
-    // Logic to blacklist the token or clear the authentication cookie
-    // Example: Response.Cookies.Delete("your_auth_cookie_name");
-    return Ok(new { message = "Logged out successfully" });
-}
-
     }
 }
