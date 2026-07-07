@@ -18,45 +18,72 @@ export class Signup {
   password = '';
   confirmPassword = '';
   errorMessage = '';
+  isLoading = false;
+  showPassword = false;
+  registrationSuccess = false;
 
-  constructor(private http: HttpClient, private router: Router){}
+  constructor(private http: HttpClient, private router: Router) {}
+
+  get passwordStrength(): number {
+    let score = 0;
+    if (this.password.length >= 6) score++;
+    if (this.password.length >= 10) score++;
+    if (/[A-Z]/.test(this.password)) score++;
+    if (/[0-9]/.test(this.password)) score++;
+    if (/[^A-Za-z0-9]/.test(this.password)) score++;
+    return score;
+  }
+
+  get strengthLabel(): string {
+    const s = this.passwordStrength;
+    if (s <= 1) return 'Weak';
+    if (s <= 3) return 'Medium';
+    return 'Strong';
+  }
+
+  get strengthColor(): string {
+    const s = this.passwordStrength;
+    if (s <= 1) return '#ff4757';
+    if (s <= 3) return '#ffa502';
+    return '#2ed573';
+  }
+
+  get isFormValid(): boolean {
+    return this.username.trim().length >= 3 &&
+           this.email.includes('@') &&
+           this.password.length >= 6 &&
+           this.password === this.confirmPassword;
+  }
+
+  togglePassword() {
+    this.showPassword = !this.showPassword;
+  }
 
   onSignup() {
+    if (!this.isFormValid) return;
     this.errorMessage = '';
+    this.isLoading = true;
 
-    if (!this.username || !this.email || !this.password) {
-      this.errorMessage = 'All fields are required.';
-      return;
-    }
-
-    if (this.password !== this.confirmPassword) {
-      this.errorMessage = 'Passwords do not match.';
-      return;
-    }
-
-    const signupData = {
+    this.http.post('http://localhost:5238/api/auth/register', {
       username: this.username,
       email: this.email,
       password: this.password
-    };
-
-    // Send the data to your .NET backend
-    this.http.post('http://localhost:5238/api/auth/register', signupData)
-      .subscribe({
-        next: (response) => {
-          console.log('Registration successful', response);
-          this.router.navigate(['/login']);
-        },
-        error: (err) => {
-          console.error('Registration failed', err);
-          if (err.error && typeof err.error === 'string') {
-            this.errorMessage = err.error;
-          } else if (err.error && err.error.message) {
-            this.errorMessage = err.error.message;
-          } else {
-            this.errorMessage = 'Registration failed. Please make sure details are correct.';
-          }
+    }).subscribe({
+      next: () => {
+        this.isLoading = false;
+        this.registrationSuccess = true;
+        setTimeout(() => this.router.navigate(['/login']), 2000);
+      },
+      error: (err) => {
+        this.isLoading = false;
+        if (err.error?.message) {
+          this.errorMessage = err.error.message;
+        } else if (typeof err.error === 'string') {
+          this.errorMessage = err.error;
+        } else {
+          this.errorMessage = 'Registration failed. Please try again.';
         }
-      });
+      }
+    });
   }
 }

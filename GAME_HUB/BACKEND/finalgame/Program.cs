@@ -1,16 +1,15 @@
 using Microsoft.EntityFrameworkCore;
-using finalgame.Data; // Ensure this matches your namespace for the DbContext
+using finalgame.Data;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
-var connectionString = builder.Configuration.GetConnectionString("AppDbContext") ?? throw new InvalidOperationException("Connection string 'AppDbContext' not found.");
 
-// 1. Add Services to the container.
+// Add Services
 builder.Services.AddControllersWithViews();
 
-// 2. Add SQLite Database Context
+// SQLite Database Context
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlite("Data Source=mydata.db"));
 
@@ -33,29 +32,24 @@ builder.Services.AddAuthentication(options =>
         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]!))
     };
 });
+
+// CORS - Allow Angular frontend
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("AllowAngular", policy => 
+    options.AddPolicy("AllowAngular", policy =>
         policy.WithOrigins("http://localhost:4200")
-              .AllowAnyMethod() // Allows GET, POST, OPTIONS, etc.
-              .AllowAnyHeader() // Required for preflight requests
-              .AllowCredentials()); // Often required for authentication headers
+              .AllowAnyMethod()
+              .AllowAnyHeader()
+              .AllowCredentials());
 });
 
-// 3. Add Swagger/OpenAPI
+// Swagger/OpenAPI
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-builder.Services.AddCors(options =>
-{
-    options.AddPolicy("AllowAngular",
-        policy => policy.WithOrigins("http://localhost:4200")
-                        .AllowAnyMethod()
-                        .AllowAnyHeader());
-});
 
 var app = builder.Build();
 
-// 4. Configure the HTTP request pipeline.
+// Configure HTTP pipeline
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();

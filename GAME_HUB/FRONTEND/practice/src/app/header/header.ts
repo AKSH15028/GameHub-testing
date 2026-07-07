@@ -15,6 +15,7 @@ export class Header implements OnInit {
   private isBrowser: boolean;
   dropdownOpen = false;
   userProfile: any = null;
+  isScrolled = false;
 
   constructor(
     @Inject(PLATFORM_ID) platformId: object,
@@ -32,6 +33,13 @@ export class Header implements OnInit {
     }
   }
 
+  @HostListener('window:scroll', [])
+  onWindowScroll() {
+    if (this.isBrowser) {
+      this.isScrolled = window.scrollY > 50;
+    }
+  }
+
   isLoggedIn(): boolean {
     if (!this.isBrowser) return false;
     return localStorage.getItem('userToken') !== null;
@@ -44,7 +52,6 @@ export class Header implements OnInit {
       },
       error: (err) => {
         console.error('Failed to load user profile in header', err);
-        // If unauthorized/invalid token, clear and go to login
         if (err.status === 401) {
           localStorage.removeItem('userToken');
         }
@@ -55,7 +62,6 @@ export class Header implements OnInit {
   toggleDropdown(event: Event) {
     event.stopPropagation();
     this.dropdownOpen = !this.dropdownOpen;
-    // Reload profile on open if not loaded
     if (this.dropdownOpen && !this.userProfile && this.isLoggedIn()) {
       this.loadUserProfile();
     }

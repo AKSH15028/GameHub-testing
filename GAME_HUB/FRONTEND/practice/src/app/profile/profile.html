@@ -1,114 +1,115 @@
-  <!--header section-->
-<header class="header">
-  <div class="logo-area">
-    <a class="logo-link" href="/home">
-      <nav class="logo-icon" >🎮</nav>
-      <nav class="platform-name">GameHub</nav>
-    </a>
-  </div>
-  
-  <nav class="nav-links">
-    <a href="/home">HOME</a>
-    <a href="/profile">MY PROFILE</a>
-    <a href="/settings">SETTINGS</a>
-    <a href="/settings#logout" class="logout-btn">LOGOUT</a>
-  </nav>
-</header>
-  <!--player profile section-->
-<div class="profile-container">
-  
-  <header class="profile-header">
-  <div class="profile-avatar">👤</div>
-  
-  <!-- Use *ngIf to ensure the page doesn't crash while data is loading -->
-  <div class="user-details" *ngIf="user">
-    <h1>{{ user.username }}</h1>
-    <p class="handle">ID: {{ user.id }}</p>
-    <p class="email">{{ user.email }}</p>
+<app-header></app-header>
+
+<div class="profile-page">
+  <!-- Loading Skeleton -->
+  <div class="skeleton-container" *ngIf="isLoading">
+    <div class="skeleton-avatar"></div>
+    <div class="skeleton-line w60"></div>
+    <div class="skeleton-line w40"></div>
+    <div class="skeleton-card"></div>
   </div>
 
-  
-</header>
-  <!--player game card section-->
-  <div class="game-dashboard">
-    <div class="game-card" >
-      <h3>1game name</h3>
-      <div class="stats-row"><span>High Score:</span>  developing</div>
-      <div class="stats-row"><span>Total Games:</span> developing </div>
-      <div class="stats-row"><span>Progress:</span>  developing</div>
-      
-      <div class="progress-bar">
-        <div class="fill" ></div>
+  <!-- Profile Content -->
+  <div class="profile-content" *ngIf="!isLoading && user">
+    <!-- Toast Messages -->
+    <div class="toast success" *ngIf="saveMessage">✅ {{ saveMessage }}</div>
+    <div class="toast error" *ngIf="saveError">❌ {{ saveError }}</div>
+
+    <!-- Profile Header -->
+    <div class="profile-header">
+      <div class="avatar-ring">
+        <div class="avatar">{{ getUserInitial() }}</div>
+      </div>
+      <div class="user-info">
+        <h1>{{ user.username }}</h1>
+        <p class="user-email">{{ user.email }}</p>
+        <p class="user-bio">{{ user.bio || 'No bio yet — tell us about yourself!' }}</p>
       </div>
     </div>
-    <div class="game-card" >
-      <h3>2game name</h3>
-      <div class="stats-row"><span>High Score:</span>  developing</div>
-      <div class="stats-row"><span>Total Games:</span> developing </div>
-      <div class="stats-row"><span>Progress:</span>  developing</div>
-      
-      <div class="progress-bar">
-        <div class="fill" ></div>
-      </div>
+
+    <!-- Tabs -->
+    <div class="tabs">
+      <button [class.active]="activeTab === 'overview'" (click)="setTab('overview')">Overview</button>
+      <button [class.active]="activeTab === 'stats'" (click)="setTab('stats')">Game Stats</button>
+      <button [class.active]="activeTab === 'edit'" (click)="setTab('edit')">Edit Profile</button>
     </div>
-    <div class="game-card" >
-      <h3>3game name</h3>
-      <div class="stats-row"><span>High Score:</span>  developing</div>
-      <div class="stats-row"><span>Total Games:</span> developing </div>
-      <div class="stats-row"><span>Progress:</span>  developing</div>
-      
-      <div class="progress-bar">
-        <div class="fill" ></div>
-      </div>
-    </div>
-  </div>
-  <!--player stats section-->
-<section class="stats-section">
-  <h2>PLAYER STATS & ACHIEVEMENTS</h2>
-  
-  <div class="stats-content">
-    <!-- Achievement List -->
-    <div class="game-activity">
-      <h3>Game Activity</h3>
-      <div class="achievement-item">
-        <span class="icon">🏆</span>
-        <div class="info">
-          <p>Recent Achievements</p>
-          <div class="stars">★★★★☆</div>
+
+    <!-- Overview Tab -->
+    <div class="tab-content" *ngIf="activeTab === 'overview'">
+      <div class="info-grid">
+        <div class="info-card">
+          <div class="info-icon">👤</div>
+          <div class="info-label">Username</div>
+          <div class="info-value">{{ user.username }}</div>
         </div>
-      </div>
-      <div class="achievement-item">
-        <span class="icon">🏆</span>
-        <div class="info">
-          <p>Recent Achievements</p>
-          <div class="stars">★★★★☆</div>
+        <div class="info-card">
+          <div class="info-icon">📧</div>
+          <div class="info-label">Email</div>
+          <div class="info-value">{{ user.email }}</div>
         </div>
-      </div>
-      <div class="achievement-item">
-        <span class="icon">🏆</span>
-        <div class="info">
-          <p>Recent Achievements</p>
-          <div class="stars">★★★★☆</div>
+        <div class="info-card">
+          <div class="info-icon">🆔</div>
+          <div class="info-label">Player ID</div>
+          <div class="info-value">#{{ user.id }}</div>
+        </div>
+        <div class="info-card">
+          <div class="info-icon">📝</div>
+          <div class="info-label">Bio</div>
+          <div class="info-value bio">{{ user.bio || 'Not set' }}</div>
         </div>
       </div>
     </div>
 
-   
-    <!-- Graph Container -->
-<div class="graph-container">
-    <h3>Total Score Over Time</h3>
-    <canvas id="scoreChart"></canvas>
+    <!-- Stats Tab -->
+    <div class="tab-content" *ngIf="activeTab === 'stats'">
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-icon">🎮</div>
+          <div class="stat-number">—</div>
+          <div class="stat-label">Games Played</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon">🏆</div>
+          <div class="stat-number">—</div>
+          <div class="stat-label">High Score</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon">⭐</div>
+          <div class="stat-number">—</div>
+          <div class="stat-label">Achievements</div>
+        </div>
+      </div>
+      <div class="coming-soon">
+        <p>🚧 Detailed game stats coming soon!</p>
+      </div>
+    </div>
+
+    <!-- Edit Tab -->
+    <div class="tab-content" *ngIf="activeTab === 'edit'">
+      <div class="edit-card">
+        <div class="edit-field">
+          <label>Username</label>
+          <input [(ngModel)]="editData.username" placeholder="Username">
+        </div>
+        <div class="edit-field">
+          <label>Email</label>
+          <input type="email" [(ngModel)]="editData.email" placeholder="Email">
+        </div>
+        <div class="edit-field">
+          <label>Bio</label>
+          <textarea [(ngModel)]="editData.bio" placeholder="Tell us about yourself..." rows="3"></textarea>
+        </div>
+        <div class="edit-field">
+          <label>New Password <span class="optional">(leave blank to keep current)</span></label>
+          <input type="password" [(ngModel)]="editData.newPassword" placeholder="New password">
+        </div>
+        <div class="edit-actions">
+          <button class="btn-save" (click)="saveProfile()" [disabled]="isSaving">
+            <span *ngIf="!isSaving">Save Changes</span>
+            <span *ngIf="isSaving" class="spinner"></span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
-
-<!-- Use the script tag to point to your local installation -->
-<script src="./node_modules/chart.js/dist/chart.umd.js"></script>
-
-<script>
-    // Now you can use the 'Chart' object globally
-    const ctx = document.getElementById('scoreChart');
-    new Chart(ctx, { 
-        type: 'line', // Make sure to define the type
-        data: { /* your data */ },
-        options: { /* your options */ }
-    });
-</script>

@@ -1,12 +1,63 @@
 <app-header></app-header>
-<main class="hero-section">
-  <div class="glass-card">
-    <h1 class="game-title">Welcome to GameHub</h1>
-    <p class="game-description">The ultimate destination for your next favorite game. Click below to start playing.</p>
-    <button class="btn-play" routerLink="/game">PLAY NOW</button> 
- </div>
-</main>
 
-<button class="btn-settings" aria-label="Settings" routerLink="/settings">
-  ⚙️
-</button>
+<!-- Hero Section -->
+<section class="hero">
+  <div class="particles">
+    <div class="particle" *ngFor="let i of [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20]"></div>
+  </div>
+  <div class="floating-icons">
+    <span class="float-icon fi-1">🎮</span>
+    <span class="float-icon fi-2">🕹️</span>
+    <span class="float-icon fi-3">🏆</span>
+    <span class="float-icon fi-4">⚡</span>
+    <span class="float-icon fi-5">🎯</span>
+    <span class="float-icon fi-6">🔥</span>
+  </div>
+  <div class="hero-content">
+    <h1 class="hero-title">
+      <span class="typed">{{ typedText }}</span><span class="cursor" [class.hidden]="!showCursor">|</span>
+    </h1>
+    <p class="hero-subtitle">Your ultimate destination to play, compete, and rise to the top.</p>
+    <div class="hero-buttons">
+      <a routerLink="/game" class="btn-neon">🎮 PLAY NOW</a>
+      <a routerLink="/signup" class="btn-outline" *ngIf="!isLoggedIn()">CREATE ACCOUNT</a>
+    </div>
+  </div>
+  <div class="scroll-indicator">
+    <div class="mouse">
+      <div class="wheel"></div>
+    </div>
+    <span>Scroll to explore</span>
+  </div>
+</section>
+
+<!-- Features Section -->
+<section class="features-section">
+  <h2 class="section-title scroll-reveal">Why <span class="accent">GameHub</span>?</h2>
+  <div class="features-grid">
+    <div class="feature-card scroll-reveal" *ngFor="let f of features; let i = index" [style.animation-delay]="(i * 0.15) + 's'">
+      <div class="feature-icon">{{ f.icon }}</div>
+      <h3>{{ f.title }}</h3>
+      <p>{{ f.desc }}</p>
+      <div class="card-glow"></div>
+    </div>
+  </div>
+</section>
+
+<!-- Stats Section -->
+<section class="stats-section">
+  <div class="stat-item" *ngFor="let s of stats">
+    <div class="stat-number">{{ s.current | number }}{{ s.suffix }}</div>
+    <div class="stat-label">{{ s.label }}</div>
+  </div>
+</section>
+
+<!-- CTA Section -->
+<section class="cta-section scroll-reveal">
+  <div class="cta-content">
+    <h2>Ready to Join the Arena?</h2>
+    <p>Create your account and start your gaming journey today.</p>
+    <a routerLink="/signup" class="btn-neon btn-large" *ngIf="!isLoggedIn()">GET STARTED FREE</a>
+    <a routerLink="/game" class="btn-neon btn-large" *ngIf="isLoggedIn()">CONTINUE PLAYING</a>
+  </div>
+</section>

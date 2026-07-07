@@ -34,7 +34,8 @@ public class ProfileController : ControllerBase
         {
             Id = user.Id,
             Username = user.Username,
-            Email = user.Email
+            Email = user.Email,
+            Bio = user.Bio
         };
     }
 
@@ -44,12 +45,13 @@ public class ProfileController : ControllerBase
     {
         var user = await _context.Users.FindAsync(id);
         if (user == null) return NotFound();
-        
+
         return new UserProfileDto
         {
             Id = user.Id,
             Username = user.Username,
-            Email = user.Email
+            Email = user.Email,
+            Bio = user.Bio
         };
     }
 
@@ -57,6 +59,9 @@ public class ProfileController : ControllerBase
     [HttpPut("{id}")]
     public async Task<IActionResult> UpdateProfile(int id, [FromBody] UpdateProfileDto dto)
     {
+        if (!ModelState.IsValid)
+            return BadRequest(ModelState);
+
         var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
         if (string.IsNullOrEmpty(userIdClaim) || !int.TryParse(userIdClaim, out int userId) || userId != id)
         {
@@ -74,6 +79,7 @@ public class ProfileController : ControllerBase
 
         user.Username = dto.Username;
         user.Email = dto.Email;
+        user.Bio = dto.Bio;
 
         if (!string.IsNullOrEmpty(dto.NewPassword))
         {
@@ -93,6 +99,6 @@ public class ProfileController : ControllerBase
             else throw;
         }
 
-        return NoContent();
+        return Ok(new { message = "Profile updated successfully!" });
     }
 }

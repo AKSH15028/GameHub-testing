@@ -1,35 +1,72 @@
-
 <app-header></app-header>
-<div class="signup-container">
-  <div class="glass-card">
-    <h2>Sign Up</h2>
-    <div *ngIf="errorMessage" class="error-banner">
-      {{ errorMessage }}
+<div class="auth-container">
+  <!-- Success Overlay -->
+  <div class="success-overlay" *ngIf="registrationSuccess">
+    <div class="success-content">
+      <div class="checkmark">✓</div>
+      <h2>Account Created!</h2>
+      <p>Redirecting to login...</p>
     </div>
+  </div>
+
+  <div class="auth-card" *ngIf="!registrationSuccess">
+    <div class="card-header">
+      <div class="logo-icon">🚀</div>
+      <h2>Create Account</h2>
+      <p class="subtitle">Join the GameHub community</p>
+    </div>
+
+    <div *ngIf="errorMessage" class="error-banner">
+      <span class="error-icon">⚠️</span> {{ errorMessage }}
+    </div>
+
     <form (ngSubmit)="onSignup()">
       <div class="form-group">
         <label for="username">Username</label>
-        <input [(ngModel)]="username" name="username" placeholder="Username" required>
+        <div class="input-wrapper">
+          <span class="input-icon">👤</span>
+          <input id="username" [(ngModel)]="username" name="username" placeholder="Choose a username" required minlength="3">
+        </div>
       </div>
 
       <div class="form-group">
         <label for="email">Email</label>
-        <input [(ngModel)]="email" name="email" placeholder="Email" required>
+        <div class="input-wrapper">
+          <span class="input-icon">📧</span>
+          <input type="email" id="email" [(ngModel)]="email" name="email" placeholder="Enter your email" required>
+        </div>
       </div>
-      
+
       <div class="form-group">
         <label for="password">Password</label>
-        <input type="password" [(ngModel)]="password" name="password" placeholder="Password" required>
+        <div class="input-wrapper">
+          <span class="input-icon">🔒</span>
+          <input [type]="showPassword ? 'text' : 'password'" id="password" [(ngModel)]="password" name="password" placeholder="Create a password" required minlength="6">
+          <button type="button" class="toggle-pw" (click)="togglePassword()">
+            {{ showPassword ? '🙈' : '👁️' }}
+          </button>
+        </div>
+        <div class="strength-bar" *ngIf="password.length > 0">
+          <div class="strength-fill" [style.width.%]="passwordStrength * 20" [style.background]="strengthColor"></div>
+        </div>
+        <span class="strength-label" *ngIf="password.length > 0" [style.color]="strengthColor">{{ strengthLabel }}</span>
       </div>
 
       <div class="form-group">
-        <label for="confirm-password">Confirm Password</label>
-        <input type="password" [(ngModel)]="confirmPassword" name="confirm-password" placeholder="Confirm your password" required>
+        <label for="confirmPassword">Confirm Password</label>
+        <div class="input-wrapper">
+          <span class="input-icon">🔐</span>
+          <input type="password" id="confirmPassword" [(ngModel)]="confirmPassword" name="confirmPassword" placeholder="Confirm your password" required>
+        </div>
+        <span class="mismatch" *ngIf="confirmPassword.length > 0 && password !== confirmPassword">Passwords do not match</span>
       </div>
 
-      <button type="submit" class="btn-submit">SIGN UP</button>
+      <button type="submit" class="btn-submit" [disabled]="!isFormValid || isLoading">
+        <span *ngIf="!isLoading">CREATE ACCOUNT</span>
+        <span *ngIf="isLoading" class="spinner"></span>
+      </button>
     </form>
-    
+
     <p class="redirect-text">
       Already have an account? <a routerLink="/login">Sign In</a>
     </p>

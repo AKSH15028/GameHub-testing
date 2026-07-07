@@ -1,8 +1,8 @@
-<header class="top-nav">
+<header class="top-nav" [class.scrolled]="isScrolled">
   <div class="logo-area">
     <a routerLink="/" class="logo-link">
-      <span class="logo-icon"routerLink="/home">🎮</span>
-      <h2 class="platform-name"routerLink="/home">GameHub</h2>
+      <span class="logo-icon" routerLink="/home">🎮</span>
+      <h2 class="platform-name" routerLink="/home">GameHub</h2>
     </a>
   </div>
  
@@ -41,10 +41,8 @@
     </div>
   </div>
   
-
-<div *ngIf="!isLoggedIn()" class="user-area">
-  <button class="btn-login" routerLink="/login">Login</button>
-  <button class="btn-signup" routerLink="/signup">Sign Up</button>
-</div>
-
+  <div *ngIf="!isLoggedIn()" class="user-area">
+    <button class="btn-login" routerLink="/login">Login</button>
+    <button class="btn-signup" routerLink="/signup">Sign Up</button>
+  </div>
 </header>
