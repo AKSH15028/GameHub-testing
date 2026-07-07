@@ -1,0 +1,202 @@
+.top-nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 50px;
+  background: rgba(0, 0, 0, 0.3);
+  backdrop-filter: blur(10px);
+  position: absolute;
+  top: 0;
+  width: 100%;
+  box-sizing: border-box;
+  z-index: 100;
+}
+
+.logo-area { display: flex; align-items: center; gap: 10px; color: white; }
+.platform-name { margin: 0; font-size: 1.5rem; }
+
+.user-area { display: flex; gap: 15px; }
+
+.btn-login {
+  padding: 8px 20px;
+  background: transparent;
+  color: white;
+  border: 1px solid white;
+  border-radius: 20px;
+  cursor: pointer;
+}
+
+.btn-signup {
+  padding: 8px 20px;
+  background: white;
+  color: #1a1a1a;
+  border: none;
+  border-radius: 20px;
+  cursor: pointer;
+}
+.logo-link {
+  display: flex; /* Keeps icon and text side-by-side */
+  align-items: center;
+  gap: 10px;
+  text-decoration: none; /* Removes the underline */
+  color: white; /* Keeps the text white */
+  cursor: pointer;
+}
+
+.logo-link:hover {
+  opacity: 0.8; /* Gives a slight hover effect */
+}
+.profile-menu-container {
+  position: relative;
+  display: inline-block;
+}
+
+.profile-circle {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1.5px solid rgba(255, 255, 255, 0.3);
+  color: white;
+  font-size: 1.2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  padding: 0;
+}
+
+.profile-circle:hover, .profile-circle.active {
+  background: rgba(255, 71, 87, 0.2);
+  border-color: #ff4757;
+  box-shadow: 0 0 15px rgba(255, 71, 87, 0.4);
+}
+
+.profile-dropdown {
+  position: absolute;
+  right: 0;
+  top: calc(100% + 15px);
+  width: 260px;
+  background: rgba(18, 18, 18, 0.85);
+  backdrop-filter: blur(25px);
+  -webkit-backdrop-filter: blur(25px);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 18px;
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.6);
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-10px);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  overflow: hidden;
+  z-index: 1000;
+}
+
+.profile-dropdown.show {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+
+.dropdown-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 18px;
+}
+
+.avatar-large {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.user-info {
+  display: flex;
+  flex-direction: column;
+  text-align: left;
+  overflow: hidden;
+}
+
+.user-info .username {
+  margin: 0;
+  font-weight: 700;
+  font-size: 0.95rem;
+  color: white;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
+
+.user-info .email {
+  margin: 2px 0 0 0;
+  font-size: 0.8rem;
+  color: rgba(255, 255, 255, 0.5);
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
+
+.dropdown-divider {
+  height: 1px;
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.dropdown-links {
+  list-style: none;
+  padding: 8px;
+  margin: 0;
+}
+
+.dropdown-links li {
+  margin-bottom: 2px;
+}
+
+.dropdown-links li:last-child {
+  margin-bottom: 0;
+}
+
+.dropdown-links a, .dropdown-logout-btn {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding: 10px 14px;
+  box-sizing: border-box;
+  text-decoration: none;
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 0.9rem;
+  border: none;
+  background: transparent;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-align: left;
+  font-family: inherit;
+}
+
+.dropdown-links a:hover, .dropdown-logout-btn:hover {
+  background: rgba(255, 255, 255, 0.06);
+  color: white;
+}
+
+.dropdown-logout-btn:hover {
+  background: rgba(255, 71, 87, 0.15);
+  color: #ff4757;
+}
+
+.dropdown-links .icon {
+  font-size: 1.1rem;
+}
+
+.dropdown-links .divider {
+  height: 1px;
+  background: rgba(255, 255, 255, 0.08);
+  margin: 6px 8px;
+}

@@ -1,0 +1,50 @@
+<header class="top-nav">
+  <div class="logo-area">
+    <a routerLink="/" class="logo-link">
+      <span class="logo-icon"routerLink="/home">🎮</span>
+      <h2 class="platform-name"routerLink="/home">GameHub</h2>
+    </a>
+  </div>
+ 
+  <div *ngIf="isLoggedIn()" class="profile-menu-container">
+    <button (click)="toggleDropdown($event)" class="profile-circle" [class.active]="dropdownOpen">
+      <span class="avatar-icon">👤</span>
+    </button>
+    
+    <div class="profile-dropdown" [class.show]="dropdownOpen">
+      <div class="dropdown-header" *ngIf="userProfile">
+        <div class="avatar-large">👤</div>
+        <div class="user-info">
+          <p class="username">{{ userProfile.username }}</p>
+          <p class="email">{{ userProfile.email }}</p>
+        </div>
+      </div>
+      <div class="dropdown-divider"></div>
+      <ul class="dropdown-links">
+        <li>
+          <a routerLink="/profile" (click)="dropdownOpen = false">
+            <span class="icon">👤</span> My Profile
+          </a>
+        </li>
+        <li>
+          <a routerLink="/settings" (click)="dropdownOpen = false">
+            <span class="icon">⚙️</span> Settings
+          </a>
+        </li>
+        <li class="divider"></li>
+        <li>
+          <button (click)="onLogout()" class="dropdown-logout-btn">
+            <span class="icon">🚪</span> Logout
+          </button>
+        </li>
+      </ul>
+    </div>
+  </div>
+  
+
+<div *ngIf="!isLoggedIn()" class="user-area">
+  <button class="btn-login" routerLink="/login">Login</button>
+  <button class="btn-signup" routerLink="/signup">Sign Up</button>
+</div>
+
+</header>
